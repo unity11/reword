@@ -6,3 +6,9 @@ Library/
 Temp/
 Logs/
 Packages/
+.vs/
+obj/
+Assembly-CSharp.csproj
+Assembly-CSharp-Editor-firstpass.csproj
+Assembly-CSharp-firstpass.csproj
+Reword.sln

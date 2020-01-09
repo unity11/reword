@@ -4,7 +4,12 @@ using UnityEngine;
 using System;
 using UnityEngine.Networking;
 
-
+public enum State
+{
+    None,
+    Get,
+    Show,
+}
 public enum RewordType
 {
     cash,   //现金奖
@@ -53,60 +58,54 @@ public class RewordMgr : MonoBehaviour
 
     public RewordType rewordType;
 
+    public State state=State.None;
     public int index;
     void Start()
     {
         BtnCtl.Init(this);
     }
 
-    
+
+    private float getTime=0;
+    private float showTime = 0;
+
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.R))
-        //{
-        //    //http://192.168.21.81:8080/lottery.php?type=cash
-        //    StartCoroutine(Get());
-        //}
 
-        //if (Input.GetKeyDown(KeyCode.Q))
-        //{
-        //    rewordType = RewordType.cash;
-        //    StartCoroutine(Get());
-        //}
-        //if (Input.GetKeyDown(KeyCode.W))
-        //{
-        //    rewordType = RewordType.special;
-        //    StartCoroutine(Get());
-        //}
-
-        if (Input.GetKeyDown(KeyCode.Space))    //&&Input.GetKey(KeyCode.LeftControl)
+        getTime -= Time.deltaTime;
+        showTime -= Time.deltaTime;
+        getTime = getTime < 0 ? 0 : getTime;
+        showTime = showTime < 0 ? 0 : showTime;
+        if (VideoCtl.ScenceVideo.clip.name!="loop")
         {
-            //OnRequest = true;
-            //StartCoroutine(SetCanRequest());
-            Debug.LogError("111");
-            StartCoroutine(Get());
+            if (Input.GetKeyDown(KeyCode.Space) && state == State.Show)
+            {
+                StartShowPhoto();
+            }
+            if (Input.GetKeyDown(KeyCode.Space)&&state==State.Get) 
+            {
+                state = State.Show;
+                StartCoroutine(Get());
+            }
+
+    
+
+            if (Input.GetKeyDown(KeyCode.Backspace))
+            {
+                state = State.None;
+                OnDisappear(delegate {
+                    BtnCtl.gameObject.SetActive(true);
+                    StartCoroutine(VideoCtl.RewordOnce(null, 0, -1, VideoType.Loop));
+                });
+            }
         }
-
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-
-            StartShowPhoto();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-
-            OnDisappear(delegate {
-                BtnCtl.gameObject.SetActive(true);
-                StartCoroutine(VideoCtl.RewordOnce(null, 0, -1, VideoType.Loop));
-            });
-        }
+ 
     }
 
     //设置新的抽奖类型
     public void SetNewReword(RewordType type)
     {
-
+        state = State.Get;
         this.rewordType = type;
         OnRewordTypeChanged();
     }
@@ -173,7 +172,10 @@ public class RewordMgr : MonoBehaviour
             }
             StartCoroutine(getScreenTexture(photos, delegate
             {
-                for (int i = 0; i < photos.Count; i++)
+                photos[0].rewindParticle.PlayForword(delegate {
+                    state = State.Get;
+                });
+                for (int i = 1; i < photos.Count; i++)
                 {
                     photos[i].rewindParticle.PlayForword(null);
                 }
@@ -218,11 +220,14 @@ public class RewordMgr : MonoBehaviour
 
     IEnumerator Get()
     {
-        //cash  special
         UnityWebRequest webRequest = UnityWebRequest.Get("http://192.168.21.81:8080/lottery.php?type="+rewordType.ToString());
         yield return webRequest.SendWebRequest();
         if (webRequest.isHttpError || webRequest.isNetworkError)
+        {
+            //请求不成功,设置状态为可请求
             Debug.Log(webRequest.error);
+            state = State.Get;
+        }
         else
         {
             Debug.Log(webRequest.downloadHandler.text);

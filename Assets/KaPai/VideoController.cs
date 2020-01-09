@@ -51,6 +51,13 @@ public class VideoController : MonoBehaviour
         ScenceVideo.loopPointReached += delegate
         {
             Debug.LogError("loopPointReached");
+            if (action != null)
+            {
+                Action _action = action;
+                action = null;
+                _action();
+            }
+
             if (ScenceVideo.clip.name=="loop")
             {
                 ScenceVideo.Play();
@@ -95,19 +102,10 @@ public class VideoController : MonoBehaviour
         {
             if (action!=null)
             {
-                Action _action = action;
-                action = null;
-                _action();
+                //Action _action = action;
+                //action = null;
+                //_action();
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            SetClip(videoClips[0]);
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            SetClip(videoClips[1]);
         }
 
         slider.value = (float)ScenceVideo.time;

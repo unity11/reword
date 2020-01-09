@@ -16,14 +16,33 @@ public class BtnController : MonoBehaviour
 
     public void Init(RewordMgr rewordMgr)
     {
+        firstBtn.onClick.AddListener(delegate
+        {
+            rewordMgr.SetNewReword(RewordType.first);
+        });
+        secondBtn.onClick.AddListener(delegate
+        {
+            rewordMgr.SetNewReword(RewordType.second);
+        });
+        thirdBtn.onClick.AddListener(delegate
+        {
+            rewordMgr.SetNewReword(RewordType.third);
+        });
+        fourthBtn.onClick.AddListener(delegate
+        {
+            rewordMgr.SetNewReword(RewordType.fourth);
+        });
+        fifthBtn.onClick.AddListener(delegate
+        {
+            rewordMgr.SetNewReword(RewordType.fifth);
+        });
+        sixthBtn.onClick.AddListener(delegate
+        {
+            rewordMgr.SetNewReword(RewordType.sixth);
+        });
         cashBtn.onClick.AddListener(delegate
         {
             rewordMgr.SetNewReword(RewordType.cash);
         });
-
-        //specialBtn.onClick.AddListener(delegate
-        //{
-        //    rewordMgr.SetNewReword(RewordType.special);
-        //});
     }
 }
