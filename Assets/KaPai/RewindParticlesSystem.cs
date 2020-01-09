@@ -80,7 +80,7 @@ public class RewindParticlesSystem : MonoBehaviour
             }
             else
             {
-                time += Time.deltaTime;
+                time += Time.deltaTime * backSpeed;
                 if (effectEvent!=null&&time>effectEvent.time)
                 {
                     effectEvent.action.Invoke();

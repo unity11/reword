@@ -37,7 +37,7 @@ public class Photo : MonoBehaviour
         renderer.trailMaterial = fireMat;
         pickture.GetComponent<RectTransform>().anchoredPosition = rewordInfo.pos;
         obj = pickture.gameObject;
-        nameText.text = webInfo.department+":"+ webInfo.name;
+        nameText.text = webInfo.department+"  "+ webInfo.name;
         nameGroup.alpha = 0;
     }
 

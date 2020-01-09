@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class BtnController : MonoBehaviour
 {
+    public Button specialBtn;
     public Button firstBtn;
     public Button secondBtn;
     public Button thirdBtn;
@@ -16,6 +17,10 @@ public class BtnController : MonoBehaviour
 
     public void Init(RewordMgr rewordMgr)
     {
+        specialBtn.onClick.AddListener(delegate
+        {
+            rewordMgr.SetNewReword(RewordType.special);
+        });
         firstBtn.onClick.AddListener(delegate
         {
             rewordMgr.SetNewReword(RewordType.first);

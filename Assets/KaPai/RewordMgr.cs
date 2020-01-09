@@ -41,8 +41,13 @@ public class RewordInfo
     public Texture tex;
 }
 
+
+
 public class RewordMgr : MonoBehaviour
 {
+
+    public string url= "http://192.168.21.81:8080/lottery.php?type=";
+
     public BtnController BtnCtl;
     public VideoController VideoCtl;
     public GameObject photoonePre;
@@ -74,6 +79,11 @@ public class RewordMgr : MonoBehaviour
     void Start()
     {
         BtnCtl.Init(this);
+        string[] arguments = Environment.GetCommandLineArgs();
+        if (arguments.Length>1)
+        {
+            url = arguments[1];
+        }
     }
 
 
@@ -81,14 +91,13 @@ public class RewordMgr : MonoBehaviour
     {
         if (VideoCtl.ScenceVideo.clip.name!="loop")
         {
-       
             if (Input.GetKeyDown(KeyCode.Space)&&RewordState==State.Get) 
             {
                 RewordState = State.Wait;
                 StartCoroutine(Get());
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) && RewordState == State.Show)
+            if (Input.GetKeyDown(KeyCode.Return) && RewordState == State.Show)
             {
                 StartShowPhoto();
             }
@@ -102,6 +111,8 @@ public class RewordMgr : MonoBehaviour
                 });
             }
         }
+
+  
  
     }
 
@@ -117,7 +128,7 @@ public class RewordMgr : MonoBehaviour
         BtnCtl.gameObject.SetActive(false);
         StartCoroutine(VideoCtl.RewordOnce(delegate
         {
-            StartCoroutine(Get());
+            //StartCoroutine(Get());
         }, 0, -1, VideoType.Start));
     }
     /// <summary>
@@ -224,7 +235,7 @@ public class RewordMgr : MonoBehaviour
 
     IEnumerator Get()
     {
-        UnityWebRequest webRequest = UnityWebRequest.Get("http://192.168.21.81:8080/lottery.php?type="+rewordType.ToString());
+        UnityWebRequest webRequest = UnityWebRequest.Get(url+rewordType.ToString());
         yield return webRequest.SendWebRequest();
         if (webRequest.isHttpError || webRequest.isNetworkError)
         {
