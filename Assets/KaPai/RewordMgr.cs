@@ -9,6 +9,7 @@ public enum State
     None,
     Get,
     Show,
+    Wait,
 }
 public enum RewordType
 {
@@ -58,7 +59,17 @@ public class RewordMgr : MonoBehaviour
 
     public RewordType rewordType;
 
-    public State state=State.None;
+    private State state= State.None;
+
+    private State RewordState
+    {
+        get { return state; }
+        set
+        {
+            state = value;
+            Debug.LogError(state);
+        }
+    }
     public int index;
     void Start()
     {
@@ -66,33 +77,25 @@ public class RewordMgr : MonoBehaviour
     }
 
 
-    private float getTime=0;
-    private float showTime = 0;
-
     void Update()
     {
-
-        getTime -= Time.deltaTime;
-        showTime -= Time.deltaTime;
-        getTime = getTime < 0 ? 0 : getTime;
-        showTime = showTime < 0 ? 0 : showTime;
         if (VideoCtl.ScenceVideo.clip.name!="loop")
         {
-            if (Input.GetKeyDown(KeyCode.Space) && state == State.Show)
+       
+            if (Input.GetKeyDown(KeyCode.Space)&&RewordState==State.Get) 
             {
-                StartShowPhoto();
-            }
-            if (Input.GetKeyDown(KeyCode.Space)&&state==State.Get) 
-            {
-                state = State.Show;
+                RewordState = State.Wait;
                 StartCoroutine(Get());
             }
 
-    
+            if (Input.GetKeyDown(KeyCode.Space) && RewordState == State.Show)
+            {
+                StartShowPhoto();
+            }
 
             if (Input.GetKeyDown(KeyCode.Backspace))
             {
-                state = State.None;
+                RewordState = State.None;
                 OnDisappear(delegate {
                     BtnCtl.gameObject.SetActive(true);
                     StartCoroutine(VideoCtl.RewordOnce(null, 0, -1, VideoType.Loop));
@@ -105,7 +108,7 @@ public class RewordMgr : MonoBehaviour
     //设置新的抽奖类型
     public void SetNewReword(RewordType type)
     {
-        state = State.Get;
+        RewordState = State.Get;
         this.rewordType = type;
         OnRewordTypeChanged();
     }
@@ -149,6 +152,7 @@ public class RewordMgr : MonoBehaviour
     {
         StartCoroutine(VideoCtl.RewordOnce(delegate
         {
+            RewordState = State.Show;
             //StartShowPhoto();
         }, 0f, -1, type));
     }
@@ -173,7 +177,7 @@ public class RewordMgr : MonoBehaviour
             StartCoroutine(getScreenTexture(photos, delegate
             {
                 photos[0].rewindParticle.PlayForword(delegate {
-                    state = State.Get;
+                    RewordState = State.Get;
                 });
                 for (int i = 1; i < photos.Count; i++)
                 {
@@ -226,7 +230,7 @@ public class RewordMgr : MonoBehaviour
         {
             //请求不成功,设置状态为可请求
             Debug.Log(webRequest.error);
-            state = State.Get;
+            RewordState = State.Get;
         }
         else
         {
