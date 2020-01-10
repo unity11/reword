@@ -8,11 +8,12 @@ using UnityEngine.Video;
 public class TestVideo : MonoBehaviour
 {
 
-    public Text text;
-    private void Start()
+ 
+    private void Update()
     {
-        string[] arguments = Environment.GetCommandLineArgs();
-        text.text = arguments[1];
+        if (Input.GetKeyDown(KeyCode.Q)&&Input.GetKey(KeyCode.LeftControl))
+        {
+            Application.Quit();
+        }
     }
-
 }

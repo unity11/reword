@@ -89,6 +89,12 @@ public class RewordMgr : MonoBehaviour
 
     void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.Q) && Input.GetKey(KeyCode.LeftControl))
+        {
+            Application.Quit();
+        }
+
         if (VideoCtl.ScenceVideo.clip.name!="loop")
         {
             if (Input.GetKeyDown(KeyCode.Space)&&RewordState==State.Get) 
